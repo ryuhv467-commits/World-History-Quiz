@@ -1,0 +1,92 @@
+/* === STYLE UMUM UNTUK SEMUA HALAMAN === */
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(to bottom right, #a7c7e7, #f9f9f9);
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+/* === KARTU UTAMA (untuk kuis & login box) === */
+.card, .login-box {
+  background: white;
+  margin: 60px auto;
+  padding: 25px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+/* === TEKS UMUM === */
+h2 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+p {
+  color: #555;
+}
+
+/* === GAMBAR TEMPAT BERSEJARAH === */
+img {
+  width: 100%;
+  border-radius: 10px;
+  margin: 15px 0;
+  transition: transform 0.3s ease;
+}
+
+img:hover {
+  transform: scale(1.02);
+}
+
+/* === TOMBOL === */
+button {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  margin: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #3d8b40;
+  transform: scale(1.05);
+}
+
+/* === INPUT USERNAME (login) === */
+input {
+  width: 85%;
+  padding: 10px;
+  margin: 12px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* === BAGIAN INFO (Timer, Skor, Nyawa) === */
+.info {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.timer, .lives, .score {
+  background: #e9f5ec;
+  padding: 8px 15px;
+  border-radius: 8px;
+  color: #2e7d32;
+}
+
+/* === ANIMASI UNTUK PESAN AKHIR === */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
