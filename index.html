@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk Kuis Tempat Bersejarah</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-box {
+      background: white;
+      width: 90%;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 15px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Selamat Datang di Kuis</h2>
+    <p>Masukkan username kamu untuk memulai:</p>
+    <input type="text" id="username" placeholder="Masukkan nama kamu">
+    <br>
+    <button onclick="startGame()">Mulai Kuis</button>
+  </div>
+
+  <script>
+    function startGame() {
+      const name = document.getElementById("username").value.trim();
+      if (!name) {
+        alert("Nama tidak boleh kosong!");
+        return;
+      }
+      localStorage.setItem("username", name);
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
