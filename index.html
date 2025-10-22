@@ -1,297 +1,47 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kuis Tempat Bersejarah Dunia 🌍</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk Kuis Tempat Bersejarah</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: #eef3ff;
-      text-align: center;
-      margin: 0;
-      padding: 20px;
-    }
-    h1, h2 { color: #003366; }
-    .container {
+    .login-box {
       background: white;
-      padding: 25px;
-      border-radius: 20px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      max-width: 500px;
-      margin: auto;
-    }
-    img {
-      width: 100%;
+      width: 90%;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
       border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
     }
-    button {
-      background: #0057e7;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      margin: 10px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    button:hover { background: #003eb3; }
     input {
+      width: 90%;
       padding: 10px;
-      border: 2px solid #0057e7;
-      border-radius: 10px;
-      width: 70%;
-      margin-top: 10px;
-    }
-    .hidden { display: none; }
-    .status {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-    .lives {
-      color: red;
-    }
-    .timer {
-      color: #0057e7;
+      margin: 15px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
-  <h1>🌍 Kuis Tebak Tempat Bersejarah Dunia</h1>
-
-  <!-- HALAMAN USERNAME -->
-  <div id="username-page" class="container">
-    <h2>Masukkan Nama Kamu</h2>
-    <input type="text" id="username" placeholder="Contoh: Rio" />
-    <br />
-    <button onclick="saveUsername()">Mulai ➜</button>
-  </div>
-
-  <!-- HALAMAN PILIH LEVEL -->
-  <div id="level-select" class="container hidden">
-    <h2 id="greeting"></h2>
-    <p>Pilih Level Kuis:</p>
-    <button onclick="startLevel('mudah')">🟢 Mudah</button>
-    <button onclick="startLevel('sedang')">🟡 Sedang</button>
-    <button onclick="startLevel('sulit')">🔴 Sulit</button>
-  </div>
-
-  <!-- HALAMAN KUIS -->
-  <div id="quiz" class="container hidden">
-    <div class="status">
-      <div class="timer">⏱️ Waktu: <span id="time">120</span>d</div>
-      <div class="lives">❤️ Nyawa: <span id="lives">3</span></div>
-      <div class="score">⭐ Skor: <span id="score">0</span></div>
-    </div>
-    <h2 id="level-title"></h2>
-    <img id="quiz-image" src="" alt="Tempat Bersejarah" />
-    <h3 id="question"></h3>
-    <div id="options"></div>
-    <p id="feedback"></p>
-    <button id="next-btn" style="display:none;">Soal Selanjutnya ➜</button>
+  <div class="login-box">
+    <h2>Selamat Datang di Kuis</h2>
+    <p>Masukkan username kamu untuk memulai:</p>
+    <input type="text" id="username" placeholder="Masukkan nama kamu">
+    <br>
+    <button onclick="startGame()">Mulai Kuis</button>
   </div>
 
   <script>
-    // ------------------------------
-    // DATA KUIS
-    // ------------------------------
-    const quizData = {
-      mudah: [
-        {
-          image: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Borobudur-Nothwest-view.jpg",
-          question: "Bangunan ini berasal dari negara mana?",
-          options: ["Indonesia", "Thailand", "India", "Kamboja"],
-          answer: "Indonesia",
-          fact: "Candi Borobudur adalah candi Buddha terbesar di dunia."
-        },
-        {
-          image: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Colosseo_2020.jpg",
-          question: "Bangunan ini terletak di kota?",
-          options: ["Paris", "Roma", "Berlin", "Madrid"],
-          answer: "Roma",
-          fact: "Colosseum adalah arena gladiator di Roma, Italia."
-        },
-        {
-          image: "https://upload.wikimedia.org/wikipedia/commons/d/da/Taj-Mahal.jpg",
-          question: "Bangunan megah ini dibangun di negara apa?",
-          options: ["Pakistan", "India", "Iran", "Nepal"],
-          answer: "India",
-          fact: "Taj Mahal dibangun oleh Shah Jahan untuk istrinya, Mumtaz Mahal."
-        }
-      ],
-      sedang: [
-        {
-          image: "https://upload.wikimedia.org/wikipedia/commons/8/83/Angkor_Wat_temple.jpg",
-          question: "Candi ini merupakan warisan dunia dari negara?",
-          options: ["Laos", "Kamboja", "Vietnam", "Myanmar"],
-          answer: "Kamboja",
-          fact: "Angkor Wat adalah kompleks candi Hindu-Buddha terbesar di dunia."
-        },
-        {
-          image: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Machu_Picchu%2C_Peru.jpg",
-          question: "Kota kuno ini berada di negara mana?",
-          options: ["Ekuador", "Peru", "Meksiko", "Chile"],
-          answer: "Peru",
-          fact: "Machu Picchu adalah kota peninggalan suku Inca di pegunungan Andes."
-        },
-        {
-          image: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Chichen_Itza_3.jpg",
-          question: "Piramida ini peninggalan peradaban apa?",
-          options: ["Mesir", "Maya", "Inca", "Aztec"],
-          answer: "Maya",
-          fact: "Chichen Itza adalah peninggalan suku Maya di Meksiko."
-        }
-      ],
-      sulit: [
-        {
-          image: "https://upload.wikimedia.org/wikipedia/commons/2/26/Petra_Jordan_BW_21.JPG",
-          question: "Kota batu kuno ini dikenal sebagai?",
-          options: ["Petra", "Persepolis", "Pompeii", "Luxor"],
-          answer: "Petra",
-          fact: "Petra adalah kota kuno di Yordania yang dipahat di tebing batu pasir merah."
-        },
-        {
-          image: "https://upload.wikimedia.org/wikipedia/commons/1/12/Alhambra_Granada_Spain.jpg",
-          question: "Kompleks istana Islam ini berada di negara?",
-          options: ["Spanyol", "Maroko", "Turki", "Mesir"],
-          answer: "Spanyol",
-          fact: "Alhambra di Granada merupakan peninggalan peradaban Islam di Eropa."
-        },
-        {
-          image: "https://upload.wikimedia.org/wikipedia/commons/d/d6/Moai_Rano_raraku.jpg",
-          question: "Patung-patung ini terdapat di pulau?",
-          options: ["Madagaskar", "Pulau Paskah", "Sumatra", "Hawaii"],
-          answer: "Pulau Paskah",
-          fact: "Patung Moai merupakan simbol kebudayaan Rapa Nui di Chili."
-        }
-      ]
-    };
-
-    let level = "";
-    let currentQuestion = 0;
-    let score = 0;
-    let playerName = "";
-    let lives = 3;
-    let timer;
-    let timeLeft = 120;
-
-    const usernamePage = document.getElementById("username-page");
-    const usernameInput = document.getElementById("username");
-    const levelSelect = document.getElementById("level-select");
-    const greeting = document.getElementById("greeting");
-    const quizDiv = document.getElementById("quiz");
-    const imageEl = document.getElementById("quiz-image");
-    const questionEl = document.getElementById("question");
-    const optionsEl = document.getElementById("options");
-    const feedbackEl = document.getElementById("feedback");
-    const nextBtn = document.getElementById("next-btn");
-    const levelTitle = document.getElementById("level-title");
-    const timeEl = document.getElementById("time");
-    const livesEl = document.getElementById("lives");
-    const scoreEl = document.getElementById("score");
-
-    function saveUsername() {
-      const name = usernameInput.value.trim();
-      if (name === "") {
+    function startGame() {
+      const name = document.getElementById("username").value.trim();
+      if (!name) {
         alert("Nama tidak boleh kosong!");
         return;
       }
-      playerName = name;
-      usernamePage.classList.add("hidden");
-      levelSelect.classList.remove("hidden");
-      greeting.textContent = Halo, ${playerName}! 👋 Pilih level untuk mulai bermain.;
-    }
-
-    function startLevel(selectedLevel) {
-      level = selectedLevel;
-      levelSelect.classList.add("hidden");
-      quizDiv.classList.remove("hidden");
-      currentQuestion = 0;
-      score = 0;
-      lives = 3;
-      scoreEl.textContent = score;
-      livesEl.textContent = lives;
-      levelTitle.textContent = Level: ${level.toUpperCase()} (${playerName});
-      loadQuestion();
-    }
-
-    function startTimer() {
-      clearInterval(timer);
-      timeLeft = 120;
-      timeEl.textContent = timeLeft;
-      timer = setInterval(() => {
-        timeLeft--;
-        timeEl.textContent = timeLeft;
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          feedbackEl.innerHTML = "⏰ Waktu habis!";
-          loseLife();
-        }
-      }, 1000);
-    }
-
-    function loadQuestion() {
-      feedbackEl.textContent = "";
-      nextBtn.style.display = "none";
-      const q = quizData[level][currentQuestion];
-      imageEl.src = q.image;
-      questionEl.textContent = q.question;
-      optionsEl.innerHTML = "";
-      q.options.forEach((opt) => {
-        const btn = document.createElement("button");
-        btn.textContent = opt;
-        btn.onclick = () => selectAnswer(opt);
-        optionsEl.appendChild(btn);
-      });
-      startTimer();
-    }
-
-    function selectAnswer(choice) {
-      clearInterval(timer);
-      const q = quizData[level][currentQuestion];
-      if (choice === q.answer) {
-        feedbackEl.innerHTML = "✅ Benar! " + q.fact;
-        score += 10;
-        scoreEl.textContent = score;
-      } else {
-        feedbackEl.innerHTML = "❌ Salah! Jawaban benar: " + q.answer + "<br>" + q.fact;
-        loseLife();
-      }
-      nextBtn.style.display = "inline-block";
-    }
-
-    function loseLife() {
-      lives--;
-      livesEl.textContent = lives;
-      if (lives <= 0) {
-        endGame("😢 Kamu kehabisan nyawa!");
-      }
-    }
-
-    nextBtn.onclick = () => {
-      currentQuestion++;
-      if (currentQuestion < quizData[level].length && lives > 0) {
-        loadQuestion();
-      } else {
-        endGame("🎉 Level selesai!");
-      }
-    };
-
-    function endGame(message) {
-      clearInterval(timer);
-      quizDiv.innerHTML = `
-        <h2>${message}</h2>
-        <p>${playerName}, skor kamu: <b>${score}</b></p>
-        <p>Sisa nyawa: ❤️ ${lives}</p>
-        <button onclick="restart()">🔁 Kembali ke Menu Level</button>
-      `;
-    }
-
-    function restart() {
-      location.reload();
+      localStorage.setItem("username", name);
+      window.location.href = "index.html";
     }
   </script>
 </body>
