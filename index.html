@@ -1,214 +1,95 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kuis Tempat Bersejarah Dunia</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background: linear-gradient(135deg, #2193b0, #6dd5ed);
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       margin: 0;
     }
     .container {
       background: #fff;
-      padding: 25px;
+      padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
       text-align: center;
-      width: 350px;
+      width: 320px;
+    }
+    h1 {
+      color: #0077b6;
     }
     input, select {
+      width: 90%;
       padding: 10px;
       margin: 10px 0;
-      width: 90%;
       border: 1px solid #ccc;
-      border-radius: 8px;
+      border-radius: 6px;
+      font-size: 15px;
     }
     button {
-      padding: 10px 15px;
-      background: #007bff;
-      color: #fff;
+      background: #0077b6;
+      color: white;
       border: none;
+      padding: 10px 20px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 15px;
     }
     button:hover {
-      background: #0056b3;
+      background: #023e8a;
     }
-    img {
-      border-radius: 10px;
-      margin-top: 10px;
-    }
-    #cover {
-      position: absolute;
-      top: 0;
-      left: 0;
-      background: rgba(0, 0, 0, 0.7);
-      width: 100%;
-      height: 0%;
-      transition: height 0.5s;
-      border-radius: 10px;
-    }
-    .image-wrapper {
-      position: relative;
-      display: inline-block;
+    footer {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #555;
     }
   </style>
 </head>
 <body>
-  <!-- Halaman Login -->
-  <div id="loginPage" class="container">
-    <h2>Kuis Tempat Bersejarah Dunia</h2>
-    <input type="text" id="username" placeholder="Masukkan nama kamu" />
+
+  <div class="container">
+    <h1>Kuis Tempat Bersejarah Dunia</h1>
+    <p>Masukkan nama kamu dan pilih tingkat kesulitan untuk memulai!</p>
+    
+    <input type="text" id="username" placeholder="Masukkan nama kamu">
     <select id="level">
+      <option value="">-- Pilih Level --</option>
       <option value="mudah">Mudah</option>
       <option value="sedang">Sedang</option>
       <option value="sulit">Sulit</option>
-    </select><br />
-    <button id="mulaiBtn">Mulai</button>
-  </div>
+    </select>
+    <br>
+    <button onclick="mulaiKuis()">Mulai</button>
 
-  <!-- Halaman Kuis -->
-  <div id="kuisPage" class="container" style="display: none;">
-    <h3 id="usernameDisplay"></h3>
-    <p>Level: <span id="levelDisplay"></span></p>
-    <p>Nyawa: <span id="nyawa">3</span> | Poin: <span id="poin">0</span></p>
-    <p>Waktu: <span id="timer">120</span> detik</p>
-
-    <div class="image-wrapper">
-      <img id="gambarTempat" src="" width="250" />
-      <div id="cover"></div>
-    </div>
-
-    <div>
-      <input type="text" id="jawaban" placeholder="Jawaban kamu..." />
-      <button id="submitBtn">Kirim</button>
-    </div>
-
-    <p id="hasil"></p>
-    <button id="ulangBtn" style="display: none;">Main Lagi</button>
+    <footer>
+      © 2025 Kuis Sejarah Dunia
+    </footer>
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const tempat = [
-        { gambar: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Kheops-Pyramid.jpg", jawaban: "Piramida Giza" },
-        { gambar: "https://upload.wikimedia.org/wikipedia/commons/1/10/Great_Wall_of_China_June_2007.jpg", jawaban: "Tembok Besar Cina" },
-        { gambar: "https://upload.wikimedia.org/wikipedia/commons/d/de/Colosseo_2020.jpg", jawaban: "Colosseum" },
-        { gambar: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Machu_Picchu%2C_Peru.jpg", jawaban: "Machu Picchu" },
-        { gambar: "https://upload.wikimedia.org/wikipedia/commons/d/da/Taj-Mahal.jpg", jawaban: "Taj Mahal" },
-        { gambar: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Borobudur-Nothwest-view.jpg", jawaban: "Candi Borobudur" },
-        { gambar: "https://upload.wikimedia.org/wikipedia/commons/2/26/Eiffel_Tower_from_the_Trocadero%2C_Paris_5_February_2015.jpg", jawaban: "Menara Eiffel" },
-        { gambar: "https://upload.wikimedia.org/wikipedia/commons/d/dc/Statue_of_Liberty_7.jpg", jawaban: "Patung Liberty" },
-        { gambar: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Angkor_Wat_temple.jpg", jawaban: "Angkor Wat" },
-        { gambar: "https://upload.wikimedia.org/wikipedia/commons/3/32/Stonehenge2007_07_30.jpg", jawaban: "Stonehenge" }
-      ];
-
-      let poin = 0, nyawa = 3, waktu = 120, indexSoal = 0;
-      let timer, username, level;
-
-      const loginPage = document.getElementById("loginPage");
-      const kuisPage = document.getElementById("kuisPage");
-      const mulaiBtn = document.getElementById("mulaiBtn");
-      const usernameInput = document.getElementById("username");
-      const levelSelect = document.getElementById("level");
-      const usernameDisplay = document.getElementById("usernameDisplay");
-      const levelDisplay = document.getElementById("levelDisplay");
-      const gambarTempat = document.getElementById("gambarTempat");
-      const cover = document.getElementById("cover");
-      const jawabanInput = document.getElementById("jawaban");
-      const hasil = document.getElementById("hasil");
-      const poinDisplay = document.getElementById("poin");
-      const nyawaDisplay = document.getElementById("nyawa");
-      const timerDisplay = document.getElementById("timer");
-      const submitBtn = document.getElementById("submitBtn");
-      const ulangBtn = document.getElementById("ulangBtn");
-
-      // Klik Mulai
-      mulaiBtn.addEventListener("click", () => {
-        username = usernameInput.value.trim();
-        level = levelSelect.value;
-        if (!username) {
-          alert("Masukkan nama kamu dulu!");
-          return;
-        }
-        loginPage.style.display = "none";
-        kuisPage.style.display = "block";
-        usernameDisplay.innerText = Halo, ${username}!;
-        levelDisplay.innerText = level;
-        mulaiSoal();
-      });
-
-      function mulaiSoal() {
-        if (indexSoal >= tempat.length || nyawa <= 0) {
-          clearInterval(timer);
-          hasil.textContent = 🎯 Permainan selesai, ${username}! Skor kamu: ${poin};
-          submitBtn.style.display = "none";
-          ulangBtn.style.display = "inline-block";
-          return;
-        }
-
-        hasil.textContent = "";
-        jawabanInput.value = "";
-        const data = tempat[indexSoal];
-        gambarTempat.src = data.gambar;
-
-        // Tutupan sesuai level
-        if (level === "mudah") cover.style.height = "0%";
-        else if (level === "sedang") cover.style.height = "50%";
-        else cover.style.height = "75%";
-
-        waktu = 120;
-        poinDisplay.textContent = poin;
-        nyawaDisplay.textContent = nyawa;
-        timerDisplay.textContent = waktu;
-
-        clearInterval(timer);
-        timer = setInterval(() => {
-          waktu--;
-          timerDisplay.textContent = waktu;
-          if (waktu <= 0) {
-            nyawa--;
-            nextSoal();
-          }
-        }, 1000);
+    // Fungsi sederhana untuk pindah ke halaman kuis
+    function mulaiKuis() {
+      const nama = document.getElementById("username").value.trim();
+      const level = document.getElementById("level").value;
+      if (!nama || !level) {
+        alert("Isi nama dan pilih level terlebih dahulu!");
+        return;
       }
-
-      submitBtn.addEventListener("click", () => {
-        const jawaban = jawabanInput.value.trim().toLowerCase();
-        const benar = tempat[indexSoal].jawaban.toLowerCase();
-        if (jawaban === benar) {
-          poin += 10;
-          hasil.textContent = "✅ Benar!";
-        } else {
-          nyawa--;
-          hasil.textContent = "❌ Salah!";
-        }
-        poinDisplay.textContent = poin;
-        nyawaDisplay.textContent = nyawa;
-        setTimeout(nextSoal, 1000);
-      });
-
-      function nextSoal() {
-        indexSoal++;
-        mulaiSoal();
-      }
-
-      ulangBtn.addEventListener("click", () => {
-        poin = 0;
-        nyawa = 3;
-        indexSoal = 0;
-        submitBtn.style.display = "inline-block";
-        ulangBtn.style.display = "none";
-        mulaiSoal();
-      });
-    });
+      // Simpan ke localStorage (agar bisa dipakai di halaman kuis.html)
+      localStorage.setItem("username", nama);
+      localStorage.setItem("level", level);
+      // Arahkan ke halaman kuis
+      window.location.href = "kuis.html";
+    }
   </script>
+
 </body>
 </html>
