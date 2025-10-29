@@ -1,105 +1,165 @@
-const name = localStorage.getItem("username");
-document.querySelector("h2").innerText = "Selamat bermain, " + name + "!";
-const questions = [
-  {
-    image: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg",
-    answer: "Menara Eiffel",
-    options: ["Menara Eiffel", "Menara Pisa", "Big Ben", "Tokyo Tower"]
-  },
-  {
-    image: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Taj_Mahal%2C_Agra%2C_India_edit3.jpg",
-    answer: "Taj Mahal",
-    options: ["Candi Borobudur", "Taj Mahal", "Angkor Wat", "Petra"]
-  },
-  {
-    image: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Borobudur-Nothwest-view.jpg",
-    answer: "Candi Borobudur",
-    options: ["Candi Borobudur", "Prambanan", "Angkor Wat", "Taj Mahal"]
-  },
-  {
-    image: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Colosseo_2020.jpg",
-    answer: "Colosseum",
-    options: ["Pantheon", "Colosseum", "Acropolis", "Petra"]
-  },
-  {
-    image: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Kheops-Pyramid.jpg",
-    answer: "Piramida Giza",
-    options: ["Stonehenge", "Piramida Giza", "Machu Picchu", "Taj Mahal"]
-  },
-  {
-    image: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Machu_Picchu%2C_Peru.jpg",
-    answer: "Machu Picchu",
-    options: ["Chichen Itza", "Machu Picchu", "Petra", "Tembok Besar China"]
-  },
-  {
-    image: "https://upload.wikimedia.org/wikipedia/commons/1/10/Great_Wall_of_China_July_2006.JPG",
-    answer: "Tembok Besar China",
-    options: ["Tembok Besar China", "Angkor Wat", "Borobudur", "Piramida Giza"]
-  },
-  {
-    image: "https://upload.wikimedia.org/wikipedia/commons/3/3c/Stonehenge2007_07_30.jpg",
-    answer: "Stonehenge",
-    options: ["Petra", "Colosseum", "Stonehenge", "Taj Mahal"]
-  },
-  {
-    image: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Statue_of_Liberty_7.jpg",
-    answer: "Patung Liberty",
-    options: ["Patung Liberty", "Christ the Redeemer", "Big Ben", "Sydney Opera House"]
-  },
-  {
-    image: "https://upload.wikimedia.org/wikipedia/commons/d/de/Angkor_Wat_temple.jpg",
-    answer: "Angkor Wat",
-    options: ["Angkor Wat", "Borobudur", "Acropolis", "Petra"]
+// ==========================
+// BAGIAN 1: LOGIN / MULAI
+// ==========================
+document.addEventListener("DOMContentLoaded", function () {
+  const btnMulai = document.querySelector("#btnMulai");
+  if (btnMulai) {
+    btnMulai.addEventListener("click", function () {
+      const nama = document.getElementById("username").value.trim();
+      const level = document.getElementById("level").value;
+
+      if (!nama || !level) {
+        alert("Isi nama dan pilih level terlebih dahulu!");
+        return;
+      }
+
+      // Simpan data ke localStorage
+      localStorage.setItem("username", nama);
+      localStorage.setItem("level", level);
+
+      // ✅ Langsung pindah ke halaman kuis
+      window.location.href = "kuis.html";
+    });
   }
-];
+});
 
-let current = 0;
-let score = 0;
-let lives = 3;
-let time = 120;
 
-function loadQuestion() {
-  if (current >= questions.length) return endGame("🎉 Kuis selesai!");
-  document.getElementById("image").src = questions[current].image;
-  const opts = document.getElementById("options");
-  opts.innerHTML = "";
-  questions[current].options.forEach(opt => {
-    const btn = document.createElement("button");
-    btn.innerText = opt;
-    btn.onclick = () => checkAnswer(opt);
-    opts.appendChild(btn);
-  });
+// ==========================
+// BAGIAN 2: DATA KUIS
+// ==========================
+const dataKuis = {
+  mudah: [
+    { gambar: "images/piramida.jpg", jawaban: "Piramida Giza" },
+    { gambar: "images/colosseum.jpg", jawaban: "Colosseum" },
+    { gambar: "images/tembokcina.jpg", jawaban: "Tembok Besar China" },
+    { gambar: "images/menaraeiffel.jpg", jawaban: "Menara Eiffel" },
+    { gambar: "images/liberty.jpg", jawaban: "Patung Liberty" },
+    { gambar: "images/borobudur.jpg", jawaban: "Candi Borobudur" },
+    { gambar: "images/prambanan.jpg", jawaban: "Candi Prambanan" },
+    { gambar: "images/opera.jpg", jawaban: "Sydney Opera House" },
+    { gambar: "images/bigmben.jpg", jawaban: "Big Ben" },
+    { gambar: "images/louvre.jpg", jawaban: "Museum Louvre" }
+  ],
+  sedang: [
+    { gambar: "images/tajmahal.jpg", jawaban: "Taj Mahal" },
+    { gambar: "images/angkorwat.jpg", jawaban: "Angkor Wat" },
+    { gambar: "images/machu.jpg", jawaban: "Machu Picchu" },
+    { gambar: "images/sagradafamilia.jpg", jawaban: "Sagrada Familia" },
+    { gambar: "images/versailles.jpg", jawaban: "Istana Versailles" },
+    { gambar: "images/pisa.jpg", jawaban: "Menara Pisa" },
+    { gambar: "images/alhambra.jpg", jawaban: "Alhambra" },
+    { gambar: "images/acropolis.jpg", jawaban: "Acropolis Athena" },
+    { gambar: "images/sphinx.jpg", jawaban: "Sphinx" },
+    { gambar: "images/neuschwanstein.jpg", jawaban: "Neuschwanstein" }
+  ],
+  sulit: [
+    { gambar: "images/petra.jpg", jawaban: "Petra" },
+    { gambar: "images/chichen.jpg", jawaban: "Chichen Itza" },
+    { gambar: "images/stonehenge.jpg", jawaban: "Stonehenge" },
+    { gambar: "images/moai.jpg", jawaban: "Pulau Paskah" },
+    { gambar: "images/palmyra.jpg", jawaban: "Palmyra" },
+    { gambar: "images/teotihuacan.jpg", jawaban: "Teotihuacan" },
+    { gambar: "images/forbidden.jpg", jawaban: "Kota Terlarang" },
+    { gambar: "images/alexandria.jpg", jawaban: "Mercusuar Alexandria" },
+    { gambar: "images/angkorthom.jpg", jawaban: "Angkor Thom" },
+    { gambar: "images/templetod.jpg", jawaban: "Kuil Todai-ji" }
+  ]
+};
+
+
+// ==========================
+// BAGIAN 3: LOGIKA KUIS
+// ==========================
+let indexSoal = 0;
+let poin = 0;
+let nyawa = 3;
+let waktu = 120;
+let timer;
+
+function mulaiGame() {
+  const nama = localStorage.getItem("username");
+  const level = localStorage.getItem("level");
+
+  if (!nama || !level) {
+    alert("Silakan login terlebih dahulu!");
+    window.location.href = "index.html";
+    return;
+  }
+
+  document.getElementById("namaPlayer").innerText = nama;
+  document.getElementById("levelGame").innerText = level.toUpperCase();
+
+  tampilkanSoal();
+  mulaiTimer();
 }
 
-function checkAnswer(choice) {
-  if (choice === questions[current].answer) {
-    score += 10;
-    document.getElementById("score").innerText = score;
-    current++;
-    loadQuestion();
+function tampilkanSoal() {
+  const level = localStorage.getItem("level");
+  const soalSekarang = dataKuis[level][indexSoal];
+
+  if (!soalSekarang) {
+    selesai();
+    return;
+  }
+
+  document.getElementById("gambarSoal").src = soalSekarang.gambar;
+  document.getElementById("jawaban").value = "";
+  document.getElementById("status").innerText =
+    Soal ${indexSoal + 1} dari ${dataKuis[level].length};
+}
+
+function cekJawaban() {
+  const level = localStorage.getItem("level");
+  const jawabanUser = document.getElementById("jawaban").value.trim().toLowerCase();
+  const jawabanBenar = dataKuis[level][indexSoal].jawaban.toLowerCase();
+
+  if (jawabanUser === jawabanBenar) {
+    poin += 10;
+    document.getElementById("hasil").innerText = "✅ Benar!";
   } else {
-    lives--;
-    document.getElementById("lives").innerText = lives;
-    if (lives === 0) endGame("😢 Kamu kehabisan nyawa!");
+    nyawa--;
+    document.getElementById("hasil").innerText =
+      ❌ Salah! Jawaban benar: ${dataKuis[level][indexSoal].jawaban};
   }
+
+  document.getElementById("poin").innerText = poin;
+  document.getElementById("nyawa").innerText = nyawa;
+
+  if (nyawa <= 0) {
+    selesai();
+    return;
+  }
+
+  indexSoal++;
+  setTimeout(() => {
+    document.getElementById("hasil").innerText = "";
+    tampilkanSoal();
+  }, 1500);
 }
 
-function endGame(msg) {
-  alert(${msg}\nSkor Akhir: ${score});
-  location.reload();
-}
-
-function timer() {
-  const t = document.getElementById("time");
-  const interval = setInterval(() => {
-    time--;
-    t.innerText = time;
-    if (time <= 0) {
-      clearInterval(interval);
-      endGame("⏰ Waktu habis!");
+function mulaiTimer() {
+  const tampilWaktu = document.getElementById("waktu");
+  timer = setInterval(() => {
+    waktu--;
+    tampilWaktu.innerText = waktu + " detik";
+    if (waktu <= 0) {
+      clearInterval(timer);
+      selesai();
     }
   }, 1000);
 }
 
-loadQuestion();
-timer();
+function selesai() {
+  clearInterval(timer);
+  document.getElementById("kuisContainer").innerHTML = `
+    <h2>Kuis Selesai!</h2>
+    <p>Skor akhir kamu: <b>${poin}</b></p>
+    <p>Terima kasih sudah bermain!</p>
+    <button onclick="ulang()">Main Lagi</button>
+  `;
+}
+
+function ulang() {
+  localStorage.clear();
+  window.location.href = "index.html";
+}
