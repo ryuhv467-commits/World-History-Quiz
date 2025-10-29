@@ -4,90 +4,44 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kuis Tempat Bersejarah Dunia</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #2193b0, #6dd5ed);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
-    }
-    .container {
-      background: #fff;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
-      text-align: center;
-      width: 320px;
-    }
-    h1 {
-      color: #0077b6;
-    }
-    input, select {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 15px;
-    }
-    button {
-      background: #0077b6;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 15px;
-    }
-    button:hover {
-      background: #023e8a;
-    }
-    footer {
-      margin-top: 15px;
-      font-size: 13px;
-      color: #555;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <h1>Kuis Tempat Bersejarah Dunia 🌍</h1>
 
-  <div class="container">
-    <h1>Kuis Tempat Bersejarah Dunia</h1>
-    <p>Masukkan nama kamu dan pilih tingkat kesulitan untuk memulai!</p>
-    
-    <input type="text" id="username" placeholder="Masukkan nama kamu">
+  <!-- Halaman Login -->
+  <section id="login" class="active">
+    <h2>Masukkan Nama dan Pilih Level</h2>
+    <input type="text" id="username" placeholder="Masukkan nama kamu"><br>
     <select id="level">
       <option value="">-- Pilih Level --</option>
       <option value="mudah">Mudah</option>
       <option value="sedang">Sedang</option>
       <option value="sulit">Sulit</option>
-    </select>
+    </select><br>
+    <button id="btnMulai">Mulai</button>
+  </section>
+
+  <!-- Halaman Kuis -->
+  <section id="kuis">
+    <h2>Selamat Datang, <span id="namaPlayer"></span>!</h2>
+    <p>Level: <span id="levelGame"></span></p>
+    <p>Nyawa ❤️: <span id="nyawa">3</span> | Poin 💎: <span id="poin">0</span> | Waktu ⏰: <span id="waktu">120</span> detik</p>
+    <p id="status"></p>
+    <img id="gambarSoal" src="" alt="Soal Gambar">
     <br>
-    <button onclick="mulaiKuis()">Mulai</button>
+    <input type="text" id="jawaban" placeholder="Tebak nama tempat..."><br>
+    <button id="btnJawab">Jawab</button>
+    <p id="hasil"></p>
+  </section>
 
-    <footer>
-      © 2025 Kuis Sejarah Dunia
-    </footer>
-  </div>
+  <!-- Halaman Selesai -->
+  <section id="selesai">
+    <h2>Kuis Selesai!</h2>
+    <p id="skorAkhir"></p>
+    <button id="btnUlang">Main Lagi</button>
+  </section>
 
-  <script>
-    // Fungsi sederhana untuk pindah ke halaman kuis
-    function mulaiKuis() {
-      const nama = document.getElementById("username").value.trim();
-      const level = document.getElementById("level").value;
-      if (!nama || !level) {
-        alert("Isi nama dan pilih level terlebih dahulu!");
-        return;
-      }
-      // Simpan ke localStorage (agar bisa dipakai di halaman kuis.html)
-      localStorage.setItem("username", nama);
-      localStorage.setItem("level", level);
-    }
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
