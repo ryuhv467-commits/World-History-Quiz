@@ -4,84 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kuis Tempat Bersejarah Dunia 🌍</title>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      text-align: center;
-      background: linear-gradient(to bottom, #003366, #336699);
-      color: white;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      background: rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 20px;
-      max-width: 450px;
-      margin: 0 auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    }
-    h2 {
-      margin-bottom: 10px;
-    }
-    input, select {
-      padding: 10px;
-      width: 80%;
-      border: none;
-      border-radius: 6px;
-      margin: 8px 0;
-    }
-    button {
-      background: #00cc66;
-      border: none;
-      padding: 10px 20px;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button:hover {
-      background: #00994d;
-    }
-    img {
-      width: 100%;
-      border-radius: 10px;
-      margin: 10px 0;
-    }
-    #quizArea { display: none; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div class="container">
+  <!-- ================= LOGIN ================= -->
+  <section id="login-section" class="active">
     <h1>Kuis Tempat Bersejarah Dunia 🌍</h1>
+    <p>Masukkan Nama dan Pilih Level</p>
+    <input type="text" id="username" placeholder="Nama Kamu">
+    <select id="level">
+      <option value="">-- Pilih Level --</option>
+      <option value="mudah">Mudah</option>
+      <option value="sedang">Sedang</option>
+      <option value="sulit">Sulit</option>
+    </select>
+    <button id="startBtn">Mulai</button>
+  </section>
 
-    <!-- Bagian Login -->
-    <div id="loginArea">
-      <h2>Masukkan Nama dan Pilih Level</h2>
-      <input type="text" id="username" placeholder="Nama kamu..." />
-      <br>
-      <select id="level">
-        <option value="mudah">Mudah</option>
-        <option value="sedang">Sedang</option>
-        <option value="sulit">Sulit</option>
-      </select>
-      <br>
-      <button id="startBtn">Mulai</button>
-    </div>
+  <!-- ================= KUIS ================= -->
+  <section id="quiz-section" style="display: none;">
+    <h2 id="playerInfo"></h2>
+    <p id="timer">02:00</p>
+    <p id="lives">❤️ 3</p>
+    <p id="score">Skor: 0</p>
 
-    <!-- Bagian Kuis -->
-    <div id="quizArea">
-      <h2 id="welcomeText"></h2>
-      <p id="info">❤️ <span id="lives">3</span> | 💎 <span id="score">0</span> | ⏰ <span id="timer">120</span> detik</p>
-      <img id="quizImage" src="" alt="Tempat Bersejarah">
-      <div>
-        <input type="text" id="answer" placeholder="Jawaban kamu...">
-        <br><br>
-        <button id="submitBtn">Jawab</button>
-      </div>
-    </div>
-  </div>
+    <img id="question-image" src="" alt="Soal Gambar" width="300">
+    <div id="options"></div>
+  </section>
+
+  <!-- ================= HASIL ================= -->
+  <section id="result-section" style="display: none;">
+    <h2>Hasil Kuis 🎉</h2>
+    <p id="result-text"></p>
+    <button id="restartBtn">Main Lagi</button>
+  </section>
 
   <script src="script.js"></script>
 </body>
