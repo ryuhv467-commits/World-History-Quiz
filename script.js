@@ -1,125 +1,203 @@
-const loginArea = document.getElementById('loginArea');
-const quizArea = document.getElementById('quizArea');
-const usernameInput = document.getElementById('username');
-const levelSelect = document.getElementById('level');
-const startBtn = document.getElementById('startBtn');
-const submitBtn = document.getElementById('submitBtn');
-const quizImage = document.getElementById('quizImage');
-const welcomeText = document.getElementById('welcomeText');
-const livesEl = document.getElementById('lives');
-const scoreEl = document.getElementById('score');
-const timerEl = document.getElementById('timer');
-const answerInput = document.getElementById('answer');
-const container = document.querySelector('.container');
+// ===============================
+// Kuis Tempat Bersejarah Dunia 🌍
+// ===============================
 
-let username = "";
+// Cek koneksi file JS
+console.log("✅ script.js aktif!");
+
+// Ambil elemen HTML
+const loginSection = document.getElementById("login-section");
+const quizSection = document.getElementById("quiz-section");
+const resultSection = document.getElementById("result-section");
+
+const usernameInput = document.getElementById("username");
+const levelSelect = document.getElementById("level");
+const startBtn = document.getElementById("startBtn");
+
+const questionImage = document.getElementById("question-image");
+const optionsContainer = document.getElementById("options");
+const timerDisplay = document.getElementById("timer");
+const lifeDisplay = document.getElementById("lives");
+const scoreDisplay = document.getElementById("score");
+
+const resultText = document.getElementById("result-text");
+const restartBtn = document.getElementById("restartBtn");
+
+// Data kuis
+const questions = [
+  // Level MUDAH
+  {
+    img: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Eiffel_Tower_Paris.jpg",
+    answer: "Menara Eiffel",
+    options: ["Menara Pisa", "Menara Eiffel", "Big Ben", "Arc de Triomphe"],
+    level: "mudah"
+  },
+  {
+    img: "https://upload.wikimedia.org/wikipedia/commons/e/e1/Great_Wall_of_China_July_2006.JPG",
+    answer: "Tembok Besar China",
+    options: ["Tembok Besar China", "Angkor Wat", "Borobudur", "Petra"],
+    level: "mudah"
+  },
+  {
+    img: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Statue_of_Liberty_7.jpg",
+    answer: "Patung Liberty",
+    options: ["Patung Liberty", "Big Ben", "Colosseum", "Taj Mahal"],
+    level: "mudah"
+  },
+
+  // Level SEDANG
+  {
+    img: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Taj_Mahal_in_March_2004.jpg",
+    answer: "Taj Mahal",
+    options: ["Taj Mahal", "Machu Picchu", "Colosseum", "Candi Prambanan"],
+    level: "sedang"
+  },
+  {
+    img: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Colosseum_in_Rome%2C_Italy_-_April_2007.jpg",
+    answer: "Colosseum",
+    options: ["Colosseum", "Petra", "Stonehenge", "Menara Pisa"],
+    level: "sedang"
+  },
+  {
+    img: "https://upload.wikimedia.org/wikipedia/commons/5/57/Angkor_Wat_temple.jpg",
+    answer: "Angkor Wat",
+    options: ["Borobudur", "Angkor Wat", "Petra", "Taj Mahal"],
+    level: "sedang"
+  },
+
+  // Level SULIT
+  {
+    img: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Machu_Picchu%2C_Peru.jpg",
+    answer: "Machu Picchu",
+    options: ["Machu Picchu", "Borobudur", "Angkor Wat", "Petra"],
+    level: "sulit"
+  },
+  {
+    img: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Borobudur-Nothwest-view.jpg",
+    answer: "Candi Borobudur",
+    options: ["Candi Prambanan", "Candi Borobudur", "Taj Mahal", "Angkor Wat"],
+    level: "sulit"
+  },
+  {
+    img: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Petra_Jordan_BW_21.JPG",
+    answer: "Petra",
+    options: ["Petra", "Colosseum", "Angkor Wat", "Tembok Besar China"],
+    level: "sulit"
+  }
+];
+
+let currentQuestion = 0;
 let score = 0;
 let lives = 3;
 let timeLeft = 120;
 let timer;
-let currentIndex = 0;
-let selectedLevel = "mudah";
+let playerName = "";
+let playerLevel = "";
+let selectedQuestions = [];
 
-// Data kuis
-const dataKuis = {
-  mudah: [
-    { img: "https://upload.wikimedia.org/wikipedia/commons/9/9c/Borobudur_Temple.jpg", answer: "candi borobudur" },
-    { img: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Eiffel_Tower_in_Paris.jpg", answer: "menara eiffel" },
-    { img: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Taj_Mahal_in_India.jpg", answer: "taj mahal" }
-  ],
-  sedang: [
-    { img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Machu_Picchu%2C_Peru.jpg", answer: "machu picchu" },
-    { img: "https://upload.wikimedia.org/wikipedia/commons/1/10/Angkor_Wat.jpg", answer: "angkor wat" },
-    { img: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Sagrada_Familia_2021.jpg", answer: "sagrada familia" }
-  ],
-  sulit: [
-    { img: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Petra_Jordan_BW_21.JPG", answer: "petra" },
-    { img: "https://upload.wikimedia.org/wikipedia/commons/3/3c/Stonehenge2007_07_30.jpg", answer: "stonehenge" },
-    { img: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Moai_Rano_raraku.jpg", answer: "pulau paskah" }
-  ]
-};
+// -----------------------------
+// Mulai Kuis
+// -----------------------------
+startBtn.addEventListener("click", () => {
+  playerName = usernameInput.value.trim();
+  playerLevel = levelSelect.value;
 
-// Tombol mulai
-startBtn.addEventListener('click', () => {
-  username = usernameInput.value.trim();
-  selectedLevel = levelSelect.value;
-
-  if (!username) {
+  if (playerName === "") {
     alert("Masukkan nama terlebih dahulu!");
     return;
   }
 
-  loginArea.style.display = "none";
-  quizArea.style.display = "block";
+  // Sembunyikan login, tampilkan kuis
+  loginSection.style.display = "none";
+  quizSection.style.display = "block";
 
-  welcomeText.textContent = Selamat datang, ${username}! Level: ${selectedLevel};
-  tampilkanSoal();
-  mulaiTimer();
+  startQuiz();
 });
 
-// Fungsi tampilkan soal
-function tampilkanSoal() {
-  const soal = dataKuis[selectedLevel][currentIndex];
+// -----------------------------
+// Fungsi Menjalankan Kuis
+// -----------------------------
+function startQuiz() {
+  // Filter dan acak pertanyaan sesuai level
+  const filteredQuestions = questions.filter(q => q.level === playerLevel);
+  selectedQuestions = shuffleArray(filteredQuestions).slice(0, 3);
 
-  if (!soal) {
-    return tampilkanHasil();
-  }
+  currentQuestion = 0;
+  score = 0;
+  lives = 3;
 
-  quizImage.src = soal.img;
-  answerInput.value = "";
+  showQuestion();
+  startTimer();
 }
 
-// Fungsi timer
-function mulaiTimer() {
+// -----------------------------
+// Tampilkan Pertanyaan
+// -----------------------------
+function showQuestion() {
+  if (currentQuestion >= selectedQuestions.length || lives <= 0) {
+    showResult();
+    return;
+  }
+
+  const q = selectedQuestions[currentQuestion];
+  questionImage.src = q.img;
+  optionsContainer.innerHTML = "";
+
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.classList.add("option-btn");
+    btn.addEventListener("click", () => checkAnswer(opt, q.answer));
+    optionsContainer.appendChild(btn);
+  });
+
+  updateStatus();
+}
+
+// -----------------------------
+// Cek Jawaban
+// -----------------------------
+function checkAnswer(selected, correct) {
+  if (selected === correct) {
+    score += 10;
+  } else {
+    lives -= 1;
+  }
+  currentQuestion++;
+  showQuestion();
+}
+
+// -----------------------------
+// Update Status
+// -----------------------------
+function updateStatus() {
+  scoreDisplay.textContent = Skor: ${score};
+  lifeDisplay.textContent = ❤️ ${lives};
+}
+
+// -----------------------------
+// Timer
+// -----------------------------
+function startTimer() {
+  timeLeft = 120;
+  clearInterval(timer);
   timer = setInterval(() => {
     timeLeft--;
-    timerEl.textContent = timeLeft;
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    timerDisplay.textContent = ${minutes}:${seconds < 10 ? "0" + seconds : seconds};
 
-    if (timeLeft <= 0) {
+    if (timeLeft <= 0 || lives <= 0) {
       clearInterval(timer);
-      tampilkanHasil();
+      showResult();
     }
   }, 1000);
 }
 
-// Saat menjawab
-submitBtn.addEventListener('click', () => {
-  const jawaban = answerInput.value.trim().toLowerCase();
-  const benar = dataKuis[selectedLevel][currentIndex].answer;
-
-  if (jawaban === benar) {
-    score += 10;
-    scoreEl.textContent = score;
-  } else {
-    lives--;
-    livesEl.textContent = lives;
-  }
-
-  currentIndex++;
-
-  if (lives <= 0 || currentIndex >= dataKuis[selectedLevel].length) {
-    clearInterval(timer);
-    tampilkanHasil();
-  } else {
-    tampilkanSoal();
-  }
-});
-
-// Fungsi hasil (dibuat langsung oleh JS)
-function tampilkanHasil() {
-  quizArea.remove();
-
-  const resultDiv = document.createElement('div');
-  resultDiv.id = "result";
-  resultDiv.innerHTML = `
-    <h2>🎉 Kuis Selesai!</h2>
-    <p>Skor akhir kamu: <b>${score}</b></p>
-    <p>Terima kasih sudah bermain, ${username}!</p>
-    <button id="restartBtn">Main Lagi</button>
-  `;
-  container.appendChild(resultDiv);
-
-  document.getElementById('restartBtn').addEventListener('click', () => {
-    location.reload();
-  });
-}
+// -----------------------------
+// Hasil Akhir
+// -----------------------------
+function showResult() {
+  quizSection.style.display = "none";
+  resultSection.style.display = "block";
+  resultText.textContent = `Nama: ${playerName
