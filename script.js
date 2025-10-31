@@ -1,181 +1,125 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const app = document.getElementById("app");
+const loginArea = document.getElementById('loginArea');
+const quizArea = document.getElementById('quizArea');
+const usernameInput = document.getElementById('username');
+const levelSelect = document.getElementById('level');
+const startBtn = document.getElementById('startBtn');
+const submitBtn = document.getElementById('submitBtn');
+const quizImage = document.getElementById('quizImage');
+const welcomeText = document.getElementById('welcomeText');
+const livesEl = document.getElementById('lives');
+const scoreEl = document.getElementById('score');
+const timerEl = document.getElementById('timer');
+const answerInput = document.getElementById('answer');
+const container = document.querySelector('.container');
 
-  // Bangun isi HTML-nya setelah DOM siap
-  app.innerHTML = `
-    <section id="login" class="active">
-      <h1>Kuis Tempat Bersejarah Dunia 🌍</h1>
-      <p>Masukkan Nama dan Pilih Level</p>
-      <input type="text" id="username" placeholder="Masukkan nama kamu" />
-      <select id="level">
-        <option value="">Pilih Level</option>
-        <option value="mudah">Mudah</option>
-        <option value="sedang">Sedang</option>
-        <option value="sulit">Sulit</option>
-      </select>
-      <button id="btnMulai">Mulai</button>
-    </section>
+let username = "";
+let score = 0;
+let lives = 3;
+let timeLeft = 120;
+let timer;
+let currentIndex = 0;
+let selectedLevel = "mudah";
 
-    <section id="kuis">
-      <h2>Selamat Datang, <span id="namaPlayer"></span>!</h2>
-      <p>Level: <span id="levelGame"></span></p>
-      <p>Nyawa ❤️: <span id="nyawa">3</span> | Poin 💎: <span id="poin">0</span> | Waktu ⏰: <span id="waktu">120</span> detik</p>
-      <img id="gambarSoal" src="" alt="Soal Gambar" width="250" />
-      <p id="status">Soal 1</p>
-      <input type="text" id="jawaban" placeholder="Tulis jawabanmu di sini" />
-      <button id="btnJawab">Jawab</button>
-      <p id="hasil"></p>
-    </section>
+// Data kuis
+const dataKuis = {
+  mudah: [
+    { img: "https://upload.wikimedia.org/wikipedia/commons/9/9c/Borobudur_Temple.jpg", answer: "candi borobudur" },
+    { img: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Eiffel_Tower_in_Paris.jpg", answer: "menara eiffel" },
+    { img: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Taj_Mahal_in_India.jpg", answer: "taj mahal" }
+  ],
+  sedang: [
+    { img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Machu_Picchu%2C_Peru.jpg", answer: "machu picchu" },
+    { img: "https://upload.wikimedia.org/wikipedia/commons/1/10/Angkor_Wat.jpg", answer: "angkor wat" },
+    { img: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Sagrada_Familia_2021.jpg", answer: "sagrada familia" }
+  ],
+  sulit: [
+    { img: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Petra_Jordan_BW_21.JPG", answer: "petra" },
+    { img: "https://upload.wikimedia.org/wikipedia/commons/3/3c/Stonehenge2007_07_30.jpg", answer: "stonehenge" },
+    { img: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Moai_Rano_raraku.jpg", answer: "pulau paskah" }
+  ]
+};
 
-    <section id="selesai">
-      <h2>Kuis Selesai!</h2>
-      <div id="skorAkhir"></div>
-      <button id="btnUlang">Main Lagi</button>
-    </section>
-  `;
+// Tombol mulai
+startBtn.addEventListener('click', () => {
+  username = usernameInput.value.trim();
+  selectedLevel = levelSelect.value;
 
-  // ==========================
-  // DATA TEMPAT BERSEJARAH
-  // ==========================
-  const dataKuis = {
-    mudah: [
-      { gambar: "images/borobudur.jpg", jawaban: "Candi Borobudur" },
-      { gambar: "images/eiffel.jpg", jawaban: "Menara Eiffel" },
-      { gambar: "images/liberty.jpg", jawaban: "Patung Liberty" },
-      { gambar: "images/colosseum.jpg", jawaban: "Colosseum" },
-      { gambar: "images/tembokcina.jpg", jawaban: "Tembok Besar China" }
-    ],
-    sedang: [
-      { gambar: "images/tajmahal.jpg", jawaban: "Taj Mahal" },
-      { gambar: "images/machu.jpg", jawaban: "Machu Picchu" },
-      { gambar: "images/angkorwat.jpg", jawaban: "Angkor Wat" },
-      { gambar: "images/sagrada.jpg", jawaban: "Sagrada Familia" },
-      { gambar: "images/versailles.jpg", jawaban: "Istana Versailles" }
-    ],
-    sulit: [
-      { gambar: "images/petra.jpg", jawaban: "Petra" },
-      { gambar: "images/stonehenge.jpg", jawaban: "Stonehenge" },
-      { gambar: "images/chichen.jpg", jawaban: "Chichen Itza" },
-      { gambar: "images/moai.jpg", jawaban: "Pulau Paskah" },
-      { gambar: "images/alhambra.jpg", jawaban: "Alhambra" }
-    ]
-  };
-
-  let indexSoal = 0;
-  let poin = 0;
-  let nyawa = 3;
-  let waktu = 120;
-  let timer;
-
-  const login = document.getElementById("login");
-  const kuis = document.getElementById("kuis");
-  const selesai = document.getElementById("selesai");
-
-  // ==========================
-  // EVENT MULAI
-  // ==========================
-  document.getElementById("btnMulai").addEventListener("click", () => {
-    const nama = document.getElementById("username").value.trim();
-    const level = document.getElementById("level").value;
-
-    if (!nama || !level) {
-      alert("Isi nama dan pilih level terlebih dahulu!");
-      return;
-    }
-
-    localStorage.setItem("username", nama);
-    localStorage.setItem("level", level);
-
-    login.classList.remove("active");
-    kuis.classList.add("active");
-
-    mulaiGame();
-  });
-
-  function mulaiGame() {
-    const nama = localStorage.getItem("username");
-    const level = localStorage.getItem("level");
-
-    document.getElementById("namaPlayer").innerText = nama;
-    document.getElementById("levelGame").innerText = level.toUpperCase();
-
-    tampilkanSoal();
-    mulaiTimer();
+  if (!username) {
+    alert("Masukkan nama terlebih dahulu!");
+    return;
   }
 
-  function tampilkanSoal() {
-    const level = localStorage.getItem("level");
-    const soal = dataKuis[level][indexSoal];
+  loginArea.style.display = "none";
+  quizArea.style.display = "block";
 
-    if (!soal) {
-      selesaiGame();
-      return;
-    }
-
-    document.getElementById("gambarSoal").src = soal.gambar;
-    document.getElementById("jawaban").value = "";
-    document.getElementById("status").innerText =
-      Soal ${indexSoal + 1} dari ${dataKuis[level].length};
-  }
-
-  document.getElementById("btnJawab").addEventListener("click", () => {
-    const level = localStorage.getItem("level");
-    const jawabanUser = document.getElementById("jawaban").value.trim().toLowerCase();
-    const jawabanBenar = dataKuis[level][indexSoal].jawaban.toLowerCase();
-
-    if (jawabanUser === jawabanBenar) {
-      poin += 10;
-      document.getElementById("hasil").innerText = "✅ Benar!";
-    } else {
-      nyawa--;
-      document.getElementById("hasil").innerText = ❌ Salah! Jawaban benar: ${dataKuis[level][indexSoal].jawaban};
-    }
-
-    document.getElementById("poin").innerText = poin;
-    document.getElementById("nyawa").innerText = nyawa;
-
-    if (nyawa <= 0) {
-      selesaiGame();
-      return;
-    }
-
-    indexSoal++;
-    setTimeout(() => {
-      document.getElementById("hasil").innerText = "";
-      tampilkanSoal();
-    }, 1500);
-  });
-
-  function mulaiTimer() {
-    const tampilWaktu = document.getElementById("waktu");
-    timer = setInterval(() => {
-      waktu--;
-      tampilWaktu.innerText = waktu;
-
-      if (waktu <= 0) {
-        clearInterval(timer);
-        selesaiGame();
-      }
-    }, 1000);
-  }
-
-  function selesaiGame() {
-    clearInterval(timer);
-    kuis.classList.remove("active");
-    selesai.classList.add("active");
-    document.getElementById("skorAkhir").innerHTML = `
-      <p>Skor akhir kamu: <b>${poin}</b></p>
-      <p>Terima kasih sudah bermain!</p>
-    `;
-  }
-
-  document.getElementById("btnUlang").addEventListener("click", () => {
-    localStorage.clear();
-    indexSoal = 0;
-    poin = 0;
-    nyawa = 3;
-    waktu = 120;
-    selesai.classList.remove("active");
-    login.classList.add("active");
-  });
+  welcomeText.textContent = Selamat datang, ${username}! Level: ${selectedLevel};
+  tampilkanSoal();
+  mulaiTimer();
 });
+
+// Fungsi tampilkan soal
+function tampilkanSoal() {
+  const soal = dataKuis[selectedLevel][currentIndex];
+
+  if (!soal) {
+    return tampilkanHasil();
+  }
+
+  quizImage.src = soal.img;
+  answerInput.value = "";
+}
+
+// Fungsi timer
+function mulaiTimer() {
+  timer = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      tampilkanHasil();
+    }
+  }, 1000);
+}
+
+// Saat menjawab
+submitBtn.addEventListener('click', () => {
+  const jawaban = answerInput.value.trim().toLowerCase();
+  const benar = dataKuis[selectedLevel][currentIndex].answer;
+
+  if (jawaban === benar) {
+    score += 10;
+    scoreEl.textContent = score;
+  } else {
+    lives--;
+    livesEl.textContent = lives;
+  }
+
+  currentIndex++;
+
+  if (lives <= 0 || currentIndex >= dataKuis[selectedLevel].length) {
+    clearInterval(timer);
+    tampilkanHasil();
+  } else {
+    tampilkanSoal();
+  }
+});
+
+// Fungsi hasil (dibuat langsung oleh JS)
+function tampilkanHasil() {
+  quizArea.remove();
+
+  const resultDiv = document.createElement('div');
+  resultDiv.id = "result";
+  resultDiv.innerHTML = `
+    <h2>🎉 Kuis Selesai!</h2>
+    <p>Skor akhir kamu: <b>${score}</b></p>
+    <p>Terima kasih sudah bermain, ${username}!</p>
+    <button id="restartBtn">Main Lagi</button>
+  `;
+  container.appendChild(resultDiv);
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    location.reload();
+  });
+}
